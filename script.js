@@ -83,3 +83,26 @@ const displayTransactions = function (transactions) {
 };
 
 displayTransactions(account1.transactions);
+console.log(accounts);
+
+const createNickname = function (accs) {
+  accs.forEach(function (acc) {
+    acc.nickname = acc.userName
+      .toLowerCase()
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
+  });
+};
+
+createNickname(accounts);
+console.log(accounts);
+//const userName = 'Oliver Avila';
+//const nickname = userName
+//  .toLowerCase()
+//  .split(' ')
+//  .map(word => word[0])
+//  .join('')
+//  .toUpperCase();
+//console.log(nickname);
