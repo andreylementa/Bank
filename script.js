@@ -121,3 +121,26 @@ const displayBalance = function (transactions) {
   labelBalance.textContent = `${balance}$`;
 };
 displayBalance(account1.transactions);
+
+const displayTotal = function (transactions) {
+  const depositesTotal = transactions
+    .filter(trans => trans > 0)
+    .reduce((acc, trans) => (acc += trans), 0);
+  labelSumIn.textContent = `${depositesTotal}$`;
+
+  const withdrawalTotal = transactions
+    .filter(trans => trans < 0)
+    .reduce((acc, trans) => (acc += trans), 0);
+  labelSumOut.textContent = `${Math.abs(withdrawalTotal)}$`;
+
+  const interestTotal = transactions
+    .filter(trans => trans > 0)
+    .map(depos => (depos * 1.1) / 100)
+    .filter((interes, index, arr) => {
+      return interes >= 5;
+    })
+    .reduce((acc, iterest) => acc + iterest, 0);
+  labelSumInterest.textContent = `${interestTotal}$`;
+};
+//displayTotal(account1.transactions)
+displayTotal(account1.transactions);
