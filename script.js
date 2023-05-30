@@ -196,3 +196,23 @@ btnTransfer.addEventListener('click', function (e) {
     updateUi(currentAccount);
   }
 });
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+  const userCloseNick = inputCloseUsername.value;
+  const userClosePin = Number(inputClosePin.value);
+  const accountClose = accounts.find(
+    account => account.nickname === userCloseNick
+  );
+  if (currentAccount === accountClose && userClosePin === currentAccount.pin) {
+    const currentAccountIndex = accounts.findIndex(
+      account => account === currentAccount
+    );
+    accounts.splice(currentAccountIndex, 1);
+    containerApp.style.opacity = '0';
+    console.log(accounts);
+    inputCloseUsername.value = '';
+    inputClosePin.value = '';
+    labelWelcome.textContent = 'Войдите в свой аккаунт';
+  }
+});
