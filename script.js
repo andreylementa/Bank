@@ -119,6 +119,7 @@ const displayBalance = function (account) {
     0
   );
   labelBalance.textContent = `${balance}$`;
+  account.balance = balance;
 };
 
 const displayTotal = function (account) {
@@ -143,6 +144,14 @@ const displayTotal = function (account) {
 };
 //displayTotal(account1.transactions)
 
+const updateUi = function (account) {
+  displayTransactions(currentAccount);
+  // Display Balance
+  displayBalance(currentAccount);
+  // Display total
+  displayTotal(currentAccount);
+};
+
 let currentAccount;
 
 btnLogin.addEventListener('click', function (e) {
@@ -150,7 +159,7 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     account => account.nickname === inputLoginUsername.value
   );
-  console.log(currentAccount);
+
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     // Display UI and welcome message
     labelWelcome.textContent = `Рады, что вы снова с нами, ${
@@ -161,11 +170,29 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginUsername.value = '';
     inputLoginPin.value = '';
     inputLoginPin.blur;
-    // Display transactions
-    displayTransactions(currentAccount);
-    // Display Balance
-    displayBalance(currentAccount);
-    // Display total
-    displayTotal(currentAccount);
+    updateUi(currentAccount);
+  }
+});
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+  const transferAmount = Number(inputTransferAmount.value);
+  const recipientNickname = inputTransferTo.value;
+  const recipientAccount = accounts.find(
+    account => account.nickname === recipientNickname
+  );
+  inputTransferAmount.value = '';
+  inputTransferTo.value = '';
+  inputTransferAmount.blur;
+
+  if (
+    transferAmount > 0 &&
+    transferAmount <= currentAccount.balance &&
+    recipientAccount &&
+    currentAccount.nickname !== recipientAccount.nickname
+  ) {
+    currentAccount.transactions.push(-transferAmount);
+    recipientAccount.transactions.push(transferAmount);
+    updateUi(currentAccount);
   }
 });
