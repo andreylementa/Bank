@@ -216,3 +216,15 @@ btnClose.addEventListener('click', function (e) {
     labelWelcome.textContent = 'Войдите в свой аккаунт';
   }
 });
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const loanAmount = Number(inputLoanAmount.value);
+  if (
+    loanAmount > 0 &&
+    currentAccount.transactions.some(trans => trans >= loanAmount / 10)
+  ) {
+    currentAccount.transactions.push(loanAmount);
+    updateUi(currentAccount);
+  }
+});
