@@ -65,9 +65,9 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayTransactions = function (transactions) {
+const displayTransactions = function (account) {
   containerTransactions.innerHTML = '';
-  transactions.forEach(function (trans, index) {
+  account.transactions.forEach(function (trans, index) {
     const transType = trans > 0 ? 'deposit' : 'withdrawal';
     const transactionRow = `
         <div class="transactions__row">
@@ -82,9 +82,6 @@ const displayTransactions = function (transactions) {
   });
 };
 
-displayTransactions(account1.transactions);
-console.log(accounts);
-
 const createNickname = function (accs) {
   accs.forEach(function (acc) {
     acc.nickname = acc.userName
@@ -92,7 +89,7 @@ const createNickname = function (accs) {
       .split(' ')
       .map(word => word[0])
       .join('')
-      .toUpperCase();
+      .toLowerCase();
   });
 };
 
@@ -116,31 +113,59 @@ createNickname(accounts);
 //const balance = transactions.reduce((acc, item) => (acc += item), 110);
 //console.log(balance);
 
-const displayBalance = function (transactions) {
-  const balance = transactions.reduce((acc, trans) => (acc += trans), 0);
+const displayBalance = function (account) {
+  const balance = account.transactions.reduce(
+    (acc, trans) => (acc += trans),
+    0
+  );
   labelBalance.textContent = `${balance}$`;
 };
-displayBalance(account1.transactions);
 
-const displayTotal = function (transactions) {
-  const depositesTotal = transactions
+const displayTotal = function (account) {
+  const depositesTotal = account.transactions
     .filter(trans => trans > 0)
     .reduce((acc, trans) => (acc += trans), 0);
   labelSumIn.textContent = `${depositesTotal}$`;
 
-  const withdrawalTotal = transactions
+  const withdrawalTotal = account.transactions
     .filter(trans => trans < 0)
     .reduce((acc, trans) => (acc += trans), 0);
   labelSumOut.textContent = `${Math.abs(withdrawalTotal)}$`;
 
-  const interestTotal = transactions
+  const interestTotal = account.transactions
     .filter(trans => trans > 0)
-    .map(depos => (depos * 1.1) / 100)
-    .filter((interes, index, arr) => {
-      return interes >= 5;
+    .map(depos => (depos * account.interest) / 100)
+    .filter((interest, index, arr) => {
+      return interest >= 5;
     })
     .reduce((acc, iterest) => acc + iterest, 0);
   labelSumInterest.textContent = `${interestTotal}$`;
 };
 //displayTotal(account1.transactions)
-displayTotal(account1.transactions);
+
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+  currentAccount = accounts.find(
+    account => account.nickname === inputLoginUsername.value
+  );
+  console.log(currentAccount);
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // Display UI and welcome message
+    labelWelcome.textContent = `Рады, что вы снова с нами, ${
+      currentAccount.userName.split(' ')[0]
+    }!`;
+    containerApp.style.opacity = '1';
+    // Clear inputs
+    inputLoginUsername.value = '';
+    inputLoginPin.value = '';
+    inputLoginPin.blur;
+    // Display transactions
+    displayTransactions(currentAccount);
+    // Display Balance
+    displayBalance(currentAccount);
+    // Display total
+    displayTotal(currentAccount);
+  }
+});
