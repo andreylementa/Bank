@@ -4,7 +4,7 @@
 
 const account1 = {
   userName: 'Cecil Ireland',
-  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100],
+  transactions: [500, 250, -300.43, 5000.77, -850.04, -110, -170, 1100],
   interest: 1.5,
   pin: 1111,
 };
@@ -77,7 +77,7 @@ const displayTransactions = function (transactions, sort = false) {
            <div class="transactions__type transactions__type--${transType}">
             ${index + 1}  ${transType}
           </div>
-          <div class="transactions__value">${trans}</div>
+          <div class="transactions__value">${trans.toFixed(2)}</div>
         </div>
         
     `;
@@ -117,10 +117,9 @@ createNickname(accounts);
 //console.log(balance);
 
 const displayBalance = function (account) {
-  const balance = account.transactions.reduce(
-    (acc, trans) => (acc += trans),
-    0
-  );
+  const balance = account.transactions
+    .reduce((acc, trans) => (acc += trans), 0)
+    .toFixed(2);
   labelBalance.textContent = `${balance}$`;
   account.balance = balance;
 };
@@ -129,12 +128,12 @@ const displayTotal = function (account) {
   const depositesTotal = account.transactions
     .filter(trans => trans > 0)
     .reduce((acc, trans) => (acc += trans), 0);
-  labelSumIn.textContent = `${depositesTotal}$`;
+  labelSumIn.textContent = `${depositesTotal.toFixed(2)}$`;
 
   const withdrawalTotal = account.transactions
     .filter(trans => trans < 0)
     .reduce((acc, trans) => (acc += trans), 0);
-  labelSumOut.textContent = `${Math.abs(withdrawalTotal)}$`;
+  labelSumOut.textContent = `${Math.abs(withdrawalTotal.toFixed(2))}$`;
 
   const interestTotal = account.transactions
     .filter(trans => trans > 0)
@@ -143,7 +142,7 @@ const displayTotal = function (account) {
       return interest >= 5;
     })
     .reduce((acc, iterest) => acc + iterest, 0);
-  labelSumInterest.textContent = `${interestTotal}$`;
+  labelSumInterest.textContent = `${interestTotal.toFixed(2)}$`;
 };
 //displayTotal(account1.transactions)
 
@@ -163,7 +162,7 @@ btnLogin.addEventListener('click', function (e) {
     account => account.nickname === inputLoginUsername.value
   );
 
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and welcome message
     labelWelcome.textContent = `Рады, что вы снова с нами, ${
       currentAccount.userName.split(' ')[0]
@@ -179,7 +178,7 @@ btnLogin.addEventListener('click', function (e) {
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  const transferAmount = Number(inputTransferAmount.value);
+  const transferAmount = +inputTransferAmount.value;
   const recipientNickname = inputTransferTo.value;
   const recipientAccount = accounts.find(
     account => account.nickname === recipientNickname
@@ -203,7 +202,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
   const userCloseNick = inputCloseUsername.value;
-  const userClosePin = Number(inputClosePin.value);
+  const userClosePin = +inputClosePin.value;
   const accountClose = accounts.find(
     account => account.nickname === userCloseNick
   );
@@ -222,7 +221,7 @@ btnClose.addEventListener('click', function (e) {
 
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
-  const loanAmount = Number(inputLoanAmount.value);
+  const loanAmount = Math.floor(inputLoanAmount.value);
   if (
     loanAmount > 0 &&
     currentAccount.transactions.some(trans => trans >= loanAmount / 10)
@@ -246,7 +245,7 @@ btnSort.addEventListener('click', function (e) {
 //   const transactionsUi = document.querySelectorAll('.transactions__value');
 //   console.log(transactionsUi);
 //   // const transactionsUiArray = Array.from(transactionsUi);
-//   // console.log(transactionsUiArray.map(elem => Number(elem.textContent)));
+//   // console.log(transactionsUiArray.map(elem => +(elem.textContent)));
 //   const transactionsUiArray = Array.from(transactionsUi, elem =>
 //     Number(elem.textContent)
 //   );
